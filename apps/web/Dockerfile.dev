@@ -1,0 +1,30 @@
+# Base image
+FROM node:20-alpine AS base
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy workspace files
+COPY pnpm-workspace.yaml ./
+COPY package.json ./package.json
+COPY tsconfig.json ./tsconfig.json
+COPY packages /app/packages
+COPY tools /app/tools
+COPY apps/web/package.json ./apps/web/package.json
+COPY apps/web/tsconfig.json ./apps/web/tsconfig.json
+
+# Install dependencies using pnpm
+# This will install dependencies for the entire monorepo,
+# leveraging pnpm's workspace feature.
+RUN pnpm install --frozen-lockfile --prefer-offline
+
+# Copy the rest of the web app source code
+COPY apps/web /app/apps/web
+
+# Set the working directory for the web app
+WORKDIR /app/apps/web
+
+# Expose port and start development server
+EXPOSE 5173
+CMD ["pnpm", "dev", "--host"]

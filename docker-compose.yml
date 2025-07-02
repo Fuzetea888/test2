@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/web:/app/apps/web
+      - /app/apps/web/node_modules # Mount node_modules as a data volume
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3000/api/v1 # Example, adjust as needed
+    depends_on:
+      - api
+    networks:
+      - complianceos_network
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/api:/app/apps/api
+      - /app/apps/api/node_modules
+      - ./packages:/app/packages # Share packages with api
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NEXTAUTH_URL=http://localhost:3000 # For NextAuth.js
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET} # For NextAuth.js
+    depends_on:
+      - db
+    networks:
+      - complianceos_network
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - complianceos_network
+
+  # swaggerui:
+  #   image: swaggerapi/swagger-ui
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./apps/docs/swagger.yaml:/usr/share/nginx/html/swagger.yaml # If using a static file for now
+  #   environment:
+  #     - SWAGGER_JSON_URL=swagger.yaml # Or point to API endpoint later
+  #   networks:
+  #     - complianceos_network
+
+volumes:
+  postgres_data:
+
+networks:
+  complianceos_network:
+    driver: bridge

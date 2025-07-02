@@ -1,0 +1,18 @@
+{
+  "extends": "@complianceos/typescript-config/express.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../../packages/database" },
+    { "path": "../../packages/types" },
+    { "path": "../../packages/auth" },
+    { "path": "../../packages/compliance" }
+  ]
+}

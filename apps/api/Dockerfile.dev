@@ -1,0 +1,45 @@
+# Base image
+FROM node:20-alpine AS base
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy workspace files
+COPY pnpm-workspace.yaml ./
+COPY package.json ./package.json
+COPY tsconfig.json ./tsconfig.json # Root tsconfig
+COPY packages /app/packages
+COPY tools /app/tools
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/api/tsconfig.json ./apps/api/tsconfig.json
+
+# Install dependencies using pnpm
+# This will install dependencies for the entire monorepo.
+RUN pnpm install --frozen-lockfile --prefer-offline
+
+# Copy the rest of the api app source code
+COPY apps/api /app/apps/api
+
+# Copy prisma schema for generation, if not already in packages
+COPY packages/database/prisma ./packages/database/prisma
+
+# Set the working directory for the api app
+WORKDIR /app/apps/api
+
+# Generate Prisma client (ensure schema is accessible)
+# The path to prisma schema is relative to the monorepo root if pnpm exec is used from root
+# Or relative to apps/api if executed from within its context after cd
+# WORKDIR /app # Go to monorepo root to run prisma generate with correct paths
+# RUN pnpm --filter @complianceos/database db:generate
+# WORKDIR /app/apps/api # Return to api dir
+
+# It's often better to generate prisma client locally or in a build step
+# and copy the generated client into the image to avoid dev dependencies in final image.
+# For dev, this should work if schema is copied correctly.
+# Ensure schema is present in packages/database/prisma
+RUN pnpm exec prisma generate --schema=../../packages/database/prisma/schema.prisma
+
+
+EXPOSE 3000
+CMD ["pnpm", "dev"]

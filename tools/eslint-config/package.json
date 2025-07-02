@@ -1,0 +1,20 @@
+{
+  "name": "@complianceos/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint . --ext js --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "typescript": "^5.0.2"
+  }
+}

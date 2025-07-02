@@ -1,0 +1,17 @@
+{
+  "name": "@complianceos/typescript-config",
+  "version": "0.1.0",
+  "private": true,
+  "files": [
+    "base.json",
+    "react-library.json",
+    "vite.json",
+    "express.json"
+  ],
+  "scripts": {
+    "lint": "echo 'No linting for typescript-config'"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2"
+  }
+}

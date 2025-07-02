@@ -1,0 +1,25 @@
+{
+  "name": "@complianceos/compliance",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest",
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.4.2",
+    "@complianceos/database": "workspace:*",
+    "@complianceos/types": "workspace:*"
+  },
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "typescript": "^5.0.2",
+    "vitest": "^0.34.6",
+    "@complianceos/eslint-config": "workspace:*",
+    "@complianceos/typescript-config": "workspace:*"
+  }
+}
